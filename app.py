@@ -8,8 +8,10 @@ from loader import db
 def setup_handlers(dispatcher: Dispatcher) -> None:
     """HANDLERS"""
     from handlers import setup_routers
+    # from handlers.users import expense
 
     dispatcher.include_router(setup_routers())
+    # dispatcher.include_router(expense.router)
 
 
 def setup_middlewares(dispatcher: Dispatcher, bot: Bot) -> None:
