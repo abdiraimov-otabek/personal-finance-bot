@@ -78,3 +78,4 @@ GRANT ALL PRIVILEGES ON DATABASE database_name TO user_name;
 <p align="center">
 <img style="width: 60%;" src="https://i.postimg.cc/nzykWKNd/result.gif">
 </p>
+# personal-finance-bot
