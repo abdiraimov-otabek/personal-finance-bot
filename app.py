@@ -1,73 +1,61 @@
 import asyncio
+import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.client.session.middlewares.request_logging import logger
 from loader import db
 
-
-def setup_handlers(dispatcher: Dispatcher) -> None:
-    """HANDLERS"""
-    from handlers import setup_routers
-    # from handlers.users import expense
-
-    dispatcher.include_router(setup_routers())
-    # dispatcher.include_router(expense.router)
-
-
-def setup_middlewares(dispatcher: Dispatcher, bot: Bot) -> None:
-    """MIDDLEWARE"""
-    from middlewares.throttling import ThrottlingMiddleware
-
-    # Spamdan himoya qilish uchun klassik ichki o'rta dastur. So'rovlar orasidagi asosiy vaqtlar 0,5 soniya
-    dispatcher.message.middleware(ThrottlingMiddleware(slow_mode_delay=0.5))
-
-
-def setup_filters(dispatcher: Dispatcher) -> None:
-    """FILTERS"""
-    from filters import ChatPrivateFilter
-
-    # Chat turini aniqlash uchun klassik umumiy filtr
-    # Filtrni handlers/users/__init__ -dagi har bir routerga alohida o'rnatish mumkin
-    dispatcher.message.filter(ChatPrivateFilter(chat_type=["private"]))
-
-
-async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
-    logger.info("Configuring aiogram")
-    setup_handlers(dispatcher=dispatcher)
-    setup_middlewares(dispatcher=dispatcher, bot=bot)
-    setup_filters(dispatcher=dispatcher)
-    logger.info("Configured aiogram")
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 async def database_connected():
-    # Ma'lumotlar bazasini yaratamiz:
+    """Ma'lumotlar bazasini yaratish"""
     await db.create()
-    # await db.drop_users()
     await db.create_table_users()
+    await db.create_table_expense()
+    await db.create_table_income()
 
 
-async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot) -> None:
+async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
+    """Botni sozlash"""
+    from handlers import setup_routers
+    from middlewares.throttling import ThrottlingMiddleware
+    from filters import ChatPrivateFilter
+
+    logger.info("Configuring aiogram")
+    dispatcher.include_router(setup_routers())
+    dispatcher.message.middleware(ThrottlingMiddleware(slow_mode_delay=0.5))
+    dispatcher.message.filter(ChatPrivateFilter(chat_type=["private"]))
+    logger.info("Configured aiogram")
+
+
+async def on_startup(dispatcher: Dispatcher, bot: Bot) -> None:
+    """Bot ishga tushganda bajariladigan kodlar"""
     from utils.set_bot_commands import set_default_commands
     from utils.notify_admins import on_startup_notify
 
-    logger.info("Database connected")
+    logger.info("Connecting to database...")
     await database_connected()
 
-    logger.info("Starting polling")
+    logger.info("Deleting old webhook (if exists)")
     await bot.delete_webhook(drop_pending_updates=True)
-    await setup_aiogram(bot=bot, dispatcher=dispatcher)
+
+    await setup_aiogram(dispatcher=dispatcher, bot=bot)
     await on_startup_notify(bot=bot)
     await set_default_commands(bot=bot)
 
+    logger.info("Bot successfully started!")
 
-async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot):
-    logger.info("Stopping polling")
+
+async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
+    """Bot to‘xtaganda bajariladigan kodlar"""
+    logger.info("Stopping bot...")
     await bot.session.close()
     await dispatcher.storage.close()
 
 
 def main():
-    """CONFIG"""
+    """Botni ishga tushirish"""
     from data.config import BOT_TOKEN
     from aiogram.enums import ParseMode
     from aiogram.fsm.storage.memory import MemoryStorage
@@ -76,10 +64,10 @@ def main():
     storage = MemoryStorage()
     dispatcher = Dispatcher(storage=storage)
 
-    dispatcher.startup.register(aiogram_on_startup_polling)
-    dispatcher.shutdown.register(aiogram_on_shutdown_polling)
+    dispatcher.startup.register(on_startup)
+    dispatcher.shutdown.register(on_shutdown)
+
     asyncio.run(dispatcher.start_polling(bot, close_bot_session=True))
-    # allowed_updates=['message', 'chat_member']
 
 
 if __name__ == "__main__":

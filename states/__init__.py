@@ -1,2 +1,2 @@
 from .test import Test, AdminState
-from .amount import ExpenseState
+from .amount import IncomeState, ExpenseState
