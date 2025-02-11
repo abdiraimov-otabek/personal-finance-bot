@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 import os
 
 from loader import db
-from keyboards.inline.buttons import download_data
-from utils.extra_datas import format_amount
+from keyboards.inline.buttons import download_incomes_data
 from utils.pgtoexcel import export_to_excel
+from utils.extra_datas import format_amount
 
 router = Router()
 
@@ -20,7 +20,7 @@ async def ask_income_amount(message: Message, state: FSMContext):
         if total_incomes is not None:
             await message.answer(
                 f"💰 Barcha daromadlaringizning jami miqdori: {format_amount(total_incomes)} so'm",
-                reply_markup=download_data,
+                reply_markup=download_incomes_data,
             )
         else:
             await message.answer("Hozircha daromadlar yo'q 🤷‍♂️")
@@ -29,7 +29,7 @@ async def ask_income_amount(message: Message, state: FSMContext):
         await message.answer("Xatolik yuz berdi. Iltimos qayta urinib ko'ring ❌")
 
 
-@router.callback_query(F.data == "get_excel_file")
+@router.callback_query(F.data == "get_excel_file_incomes")
 async def get_excel_file(callback: types.CallbackQuery):
     try:
         user_id = callback.from_user.id

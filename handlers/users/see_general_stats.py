@@ -13,11 +13,12 @@ router = Router()
 async def ask_income_amount(message: Message, state: FSMContext):
     user_id = message.from_user.id
     try:
-        total_stats = await db.get_general_stat(user_id=user_id)
+        expense_stats = await db.select_all_expenses(user_id=user_id)
+        income_stats = await db.select_all_incomes(user_id=user_id)
 
-        if total_stats is not None:
+        if expense_stats and income_stats is not None:
             await message.answer(
-                f"💰 Umumiy  statistika: {format_amount(total_stats)} so'm",
+                f"💰 Umumiy statistika:\n\n🤑 Sizning xarajatlaringiz {format_amount(expense_stats)} so'm\n\n💳 Sizning daromadlaringiz: {format_amount(income_stats)} so'm",
             )
         else:
             await message.answer("Hozircha statistika yo'q 🤷‍♂️")

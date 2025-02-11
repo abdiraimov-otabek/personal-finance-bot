@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 import os
 
 from loader import db
-from keyboards.inline.buttons import download_data
+from keyboards.inline.buttons import download_expenses_data
 from utils.pgtoexcel import export_to_excel
 from utils.extra_datas import format_amount
 
@@ -20,16 +20,16 @@ async def ask_expense_amount(message: Message, state: FSMContext):
         if total_expenses is not None:
             await message.answer(
                 f"💸 Barcha xarajatlaringizning jami miqdori: {format_amount(total_expenses)} so'm",
-                reply_markup=download_data,
+                reply_markup=download_expenses_data,
             )
         else:
-            await message.answer("Hozircha xarajatlar yo'q 🤷‍♂️")
+            await message.axnswer("Hozircha xarajatlar yo'q 🤷‍♂️")
     except Exception as e:
         print(f"Error while fetching expenses: {e}")
         await message.answer("Xatolik yuz berdi. Iltimos qayta urinib ko'ring ❌")
 
 
-@router.callback_query(F.data == "get_excel_file")
+@router.callback_query(F.data == "get_excel_file_expenses")
 async def get_excel_file(callback: types.CallbackQuery):
     try:
         user_id = callback.from_user.id

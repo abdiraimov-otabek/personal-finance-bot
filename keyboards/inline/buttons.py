@@ -20,12 +20,22 @@ choise_data = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 inline_keyboard = [
     [
         InlineKeyboardButton(
-            text="📄 Hisobotni yuklab olish", callback_data="get_excel_file"
+            text="📄 Hisobotni yuklab olish", callback_data="get_excel_file_expenses"
         )
     ],
 ]
 
-download_data = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+download_expenses_data = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+inline_keyboard = [
+    [
+        InlineKeyboardButton(
+            text="📄 Hisobotni yuklab olish", callback_data="get_excel_file_incomes"
+        )
+    ],
+]
+
+download_incomes_data = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 inline_keyboard = [
     [

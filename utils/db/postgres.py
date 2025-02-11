@@ -84,9 +84,11 @@ class Database:
         """
         await self.execute(sql, execute=True)
 
-    async def add_user(self, full_name, username, telegram_id):
-        sql = "INSERT INTO users (full_name, username, telegram_id) VALUES($1, $2, $3) returning *"
-        return await self.execute(sql, full_name, username, telegram_id, fetchrow=True)
+    async def add_user(self, full_name, username, telegram_id, is_premium=False):
+        sql = "INSERT INTO users (full_name, username, telegram_id, is_premium) VALUES($1, $2, $3, $4) returning *"
+        return await self.execute(
+            sql, full_name, username, telegram_id, is_premium, fetchrow=True
+        )
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
