@@ -18,8 +18,3 @@ DB_PASS = db_url.password
 DB_NAME = db_url.path[1:]
 DB_HOST = db_url.hostname
 DB_PORT = db_url.port
-
-DB_USER2 = env.str("DB_USER")
-DB_PASS2 = env.str("DB_PASS")
-DB_NAME2 = env.str("DB_NAME")
-DB_HOST2 = env.str("DB_HOST")
