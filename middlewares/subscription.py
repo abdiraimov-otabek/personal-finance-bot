@@ -1,23 +1,24 @@
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
-from aiogram import types
+from aiogram import Bot
 
 CHANNEL_USERNAME = "@otabekabdiraimov_blog"
 
 
 class SubscriptionMiddleware(BaseMiddleware):
-    async def on_pre_process_message(self, message: types.Message, data: dict):
-        user_id = message.from_user.id
-        bot = message.bot
+    def __init__(self, bot: Bot):
+        super().__init__()
+        self.bot = bot  # Bot obyektini middleware ichiga olamiz
 
-        # Check if user is subscribe
+    async def on_pre_process_message(self, message: Message, data: dict):
+        user_id = message.from_user.id
+
         try:
-            chat_member = await bot.get_chat_member(
-                chat_id=CHANNEL_USERNAME, user_id=user_id
-            )
+            chat_member = await self.bot.get_chat_member(CHANNEL_USERNAME, user_id)
             if chat_member.status not in ["member", "administrator", "creator"]:
-                markup = types.InlineKeyboardMarkup()
+                markup = InlineKeyboardMarkup()
                 markup.add(
-                    types.InlineKeyboardButton(
+                    InlineKeyboardButton(
                         "Obuna bo'ling", url=f"https://t.me/{CHANNEL_USERNAME[1:]}"
                     )
                 )

@@ -18,7 +18,6 @@ async def database_connected():
 
 
 async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
-    """Botni sozlash"""
     from handlers import setup_routers
     from middlewares.throttling import ThrottlingMiddleware
     from middlewares.subscription import SubscriptionMiddleware
@@ -27,7 +26,9 @@ async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
     logger.info("Configuring aiogram")
     dispatcher.include_router(setup_routers())
     dispatcher.message.middleware(ThrottlingMiddleware(slow_mode_delay=0.5))
-    dispatcher.message.middleware(SubscriptionMiddleware)
+    dispatcher.message.middleware(
+        SubscriptionMiddleware(bot)
+    )  # ✅ Middleware chaqirilishi to‘g‘ri bo‘ldi
     dispatcher.message.filter(ChatPrivateFilter(chat_type=["private"]))
     logger.info("Configured aiogram")
 
@@ -60,7 +61,6 @@ async def on_shutdown(dispatcher: Dispatcher, bot: Bot):
 def main():
     """Botni ishga tushirish"""
     from data.config import BOT_TOKEN
-    from aiogram.enums import ParseMode
     from aiogram.fsm.storage.memory import MemoryStorage
 
     bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
