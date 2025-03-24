@@ -28,7 +28,9 @@ class SubscriptionMiddleware(BaseMiddleware):
                 )
                 return  # Agar user a'zo bo'lmasa, boshqa handlerlar ishlamasin
         except Exception as e:
-            await event.answer("⚠️ Xatolik yuz berdi!")
+            await event.answer(
+                "⚠️ Xatolik yuz berdi! Manimcha siz @otabekabdiraimov_blog kanaliga obuna bo'lmagansiz."
+            )
             return
 
         return await handler(event, data)  # Agar a'zo bo'lsa, davom ettiramiz
