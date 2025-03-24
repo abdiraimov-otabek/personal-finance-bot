@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from aiogram.client.default import DefaultBotProperties
 from aiogram import Bot, Dispatcher
 from loader import db
 
@@ -20,11 +21,13 @@ async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
     """Botni sozlash"""
     from handlers import setup_routers
     from middlewares.throttling import ThrottlingMiddleware
+    from middlewares.subscription import SubscriptionMiddleware
     from filters import ChatPrivateFilter
 
     logger.info("Configuring aiogram")
     dispatcher.include_router(setup_routers())
     dispatcher.message.middleware(ThrottlingMiddleware(slow_mode_delay=0.5))
+    dispatcher.message.middleware(SubscriptionMiddleware)
     dispatcher.message.filter(ChatPrivateFilter(chat_type=["private"]))
     logger.info("Configured aiogram")
 
@@ -60,7 +63,7 @@ def main():
     from aiogram.enums import ParseMode
     from aiogram.fsm.storage.memory import MemoryStorage
 
-    bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     storage = MemoryStorage()
     dispatcher = Dispatcher(storage=storage)
 

@@ -13,10 +13,10 @@ class Database:
 
     async def create(self):
         self.pool = await asyncpg.create_pool(
-            user=config.DB_USER,
-            password=config.DB_PASS,
-            host=config.DB_HOST,
-            database=config.DB_NAME,
+            user=config.DB_USER2,
+            password=config.DB_PASS2,
+            host=config.DB_HOST2,
+            database=config.DB_NAME2,
         )
 
     async def execute(
@@ -141,19 +141,19 @@ class Database:
 
     async def get_category_stats(self, user_id):
         sql = """
-        SELECT reason, SUM(amount) as total 
-        FROM expenses 
+        SELECT reason, SUM(amount) as total
+        FROM expenses
         WHERE user_id = $1
-        GROUP BY reason 
+        GROUP BY reason
         ORDER BY total DESC
         """
         return await self.execute(sql, user_id, fetch=True)
 
     async def get_general_stat(self, user_id):
         sql = """
-        SELECT 
-        (COALESCE((SELECT SUM(amount) FROM Incomes WHERE user_id = $1), 0) - 
-        COALESCE((SELECT SUM(amount) FROM Expenses WHERE user_id = $1), 0)) 
+        SELECT
+        (COALESCE((SELECT SUM(amount) FROM Incomes WHERE user_id = $1), 0) -
+        COALESCE((SELECT SUM(amount) FROM Expenses WHERE user_id = $1), 0))
         AS general_balance;
         """
         return await self.execute(sql, user_id, fetch=True)
