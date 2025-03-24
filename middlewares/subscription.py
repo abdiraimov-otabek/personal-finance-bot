@@ -1,6 +1,6 @@
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
-from aiogram import Bot
+from aiogram import Bot, types
 
 CHANNEL_USERNAME = "@otabekabdiraimov_blog"
 
@@ -8,25 +8,27 @@ CHANNEL_USERNAME = "@otabekabdiraimov_blog"
 class SubscriptionMiddleware(BaseMiddleware):
     def __init__(self, bot: Bot):
         super().__init__()
-        self.bot = bot  # Bot obyektini middleware ichiga olamiz
+        self.bot = bot  # Bot obyektini saqlaymiz
 
-    async def on_pre_process_message(self, message: Message, data: dict):
-        user_id = message.from_user.id
+    async def __call__(self, handler, event: Message, data: dict):
+        user_id = event.from_user.id
 
         try:
             chat_member = await self.bot.get_chat_member(CHANNEL_USERNAME, user_id)
             if chat_member.status not in ["member", "administrator", "creator"]:
-                markup = InlineKeyboardMarkup()
+                markup = types.InlineKeyboardMarkup()
                 markup.add(
-                    InlineKeyboardButton(
+                    types.InlineKeyboardButton(
                         "Obuna bo'ling", url=f"https://t.me/{CHANNEL_USERNAME[1:]}"
                     )
                 )
-                await message.answer(
+                await event.answer(
                     "⚠️ Botni ishlatish uchun quyidagi kanalga obuna bo'ling.",
                     reply_markup=markup,
                 )
-                raise Exception("User not subscribed")
+                return  # Agar user a'zo bo'lmasa, boshqa handlerlar ishlamasin
         except Exception as e:
-            await message.answer("⚠️ Xatolik!")
-            raise e  # Stop processing
+            await event.answer("⚠️ Xatolik yuz berdi!")
+            return
+
+        return await handler(event, data)  # Agar a'zo bo'lsa, davom ettiramiz
