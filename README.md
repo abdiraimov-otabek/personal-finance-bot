@@ -36,15 +36,18 @@ git clone https://github.com/abdiraimov-otabek/pfb-bot.git
 cd pfb-bot
 
 ### 2. Setup virtual environment
+
 ```bash
 python -m venv venv
 source venv/bin/activate
 
 ### 3. Install requirements
+
 ```bash
 pip install -r requirements.txt
 
 ### 4. Configure .env
+
 ```env
 BOT_TOKEN=your_telegram_bot_token
 ADMIN_ID=your_telegram_id
