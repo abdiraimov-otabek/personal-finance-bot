@@ -1,82 +1,55 @@
-# Aiogram New Template (aiogram 3)
+# 💸 PFB — Personal Finance Bot
 
-### 1. Create virtual environment and install packages
-Windows
-```shell
-python -m venv venv && venv\bin\activate && pip install -r requirements.txt
-```
+Telegram bot for managing personal finances directly from chat.  
+Track income, expenses, and budgets — all in one minimal and fast bot.
 
-Linux/Mac
-```shell
-python3 -m venv venv && source venv/bin/activate && pip3 install -r requirements.txt
-```
+Built with **Python** + **Aiogram 3**, backed by a simple DB, designed for Gen Z speed.
 
-### 2. Create .env file and copy all variables from .env_example to it and customize your self (if needed)
-```shell
-cp .env.example .env
-```
-### 3. Run app.py
-Windows
-```shell
-python app.py
-```
-Linux/Mac
-```shell
-python3 app.py
-```
+---
 
-# Set up Postgresql on server
+## 🧠 Core Features
 
-### 1. Install postgresql (if needed)
-```shell
-sudo apt install -y postgresql postgresql-contrib
-```
+- ➕ Add income and expenses  
+- 📊 View daily/weekly/monthly summaries  
+- 🧾 Categorize transactions  
+- 💰 Track balance  
+- ⏰ Set budgets and get notified if close to limit  
+- 📥 Export data as CSV 
+- 🔐 Admin-only access (no public usage)
 
-### 2. Log in to the postgresql shell
-```shell
-sudo -u postres psql
-```
+---
 
-### 3. Create a database (in postgresql shell)
-```shell
-CREATE DATABASE database_name WITH template = template0 ENCODING 'UTF8' LC_CTYPE 'C' LC_COLLATE 'C';
-```
+## ⚙️ Tech Stack
 
-### 4. Create a user (in postgresql shell)
-```shell
-CREATE USER user_name WITH PASSWORD 'password';
-```
+- Python 3.11+  
+- Aiogram 3  
+- SQLite (can be upgraded to PostgreSQL)  
 
-### 5. Set encoding (in postgresql shell)
-```shell
-ALTER ROLE user_name SET client_encoding TO 'utf8';
-```
+---
 
-### 6. Restrict transactions from an unexpected db user (in postgresql shell)
-```shell
-ALTER ROLE user_name SET default_transaction_isolation TO 'read committed';
-```
+## 🚀 Getting Started
 
-### 7. Set timezone (in postgresql shell)
-```shell
-ALTER ROLE user_name SET timezone TO 'UTC';
-```
-> **_Note:_**  If you use another timezone in your project, replace **'UTC'** with yours.
+### 1. Clone the repo
 
-### 8. Grant the user the right to manage the db (in postgresql shell)
-```shell
-GRANT ALL PRIVILEGES ON DATABASE database_name TO user_name;
-```
+```bash
+git clone https://github.com/abdiraimov-otabek/pfb-bot.git
+cd pfb-bot
 
-### 9. Quit postgresql (in postgresql shell)
-```shell
-\q
-```
 
-## If you have questions for this project, join and ask our community: https://t.me/+Wu3loL2thM8yZDMy
+### 2. Setup virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate
 
-<p align="center">
-<img style="width: 60%;" src="https://i.postimg.cc/nzykWKNd/result.gif">
-</p>
-# personal-finance-bot
-# personal-finance-bot
+### 3. Install requirements
+```bash
+pip install -r requirements.txt
+
+### 4. Configure .env
+```env
+BOT_TOKEN=your_telegram_bot_token
+ADMIN_ID=your_telegram_id
+
+### 5. Run the bot
+```bash
+python main.py
