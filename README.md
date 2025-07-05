@@ -35,7 +35,6 @@ Built with **Python** + **Aiogram 3**, backed by a simple DB, designed for Gen Z
 git clone https://github.com/abdiraimov-otabek/pfb-bot.git
 cd pfb-bot
 
-
 ### 2. Setup virtual environment
 ```bash
 python -m venv venv
